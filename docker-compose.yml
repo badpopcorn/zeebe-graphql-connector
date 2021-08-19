@@ -1,0 +1,13 @@
+version: "3.7"
+
+services:
+  app:
+    build: .
+    environment:
+    - ZEEBE_ADDRESS
+    - ZEEBE_CLIENT_ID
+    - ZEEBE_CLIENT_SECRET
+    - GRAPHQL_ENDPOINT_URL
+    - GRAPHQL_AUTHORIZATION_HEADER_KEY
+    - GRAPHQL_AUTHORIZATION_HEADER_VALUE
+    - ZEEBE_TASK_TYPE

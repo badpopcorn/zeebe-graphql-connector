@@ -27,7 +27,7 @@ const gqlClient = new GraphQLClient(GRAPHQL_ENDPOINT_URL, {
 const handler = async (job, complete, worker) => {
     try {
         // We begin by getting the query data from the job
-        console.log(job);
+        console.log(`Handling Job: key=${job.key}, type=${job.type}, workflowInstanceKey=${job.workflowInstanceKey}, processInstanceKey=${job.processInstanceKey}, bpmnProcessId=${job.bpmnProcessId}, workflowDefinitionVersion=${job.workflowDefinitionVersion}, processDefinitionVersion=${job.processDefinitionVersion}, workflowKey=${job.workflowKey}, processKey=${job.processKey}, elementId=${job.elementId}, elementInstanceKey=${job.elementInstanceKey}`);
         const dataKey = job.customHeaders.graphql_data_key;
         const queryStr = job.customHeaders.graphql_query;
         const query = gql([queryStr], []);
@@ -58,7 +58,9 @@ const handler = async (job, complete, worker) => {
             if (key.startsWith('graphql_var_') && key.length > 12) {
                 varKey = key.substring(12);
                 const value = job.customHeaders[key] || '';
-                if (value.startsWith('=')) {
+                if (value === '=$') {
+                    variables[varKey] = JSON.stringify(feelContext);
+                } else if (value.startsWith('=')) {
                     // Any Error by the feel evaluation will throw an error,
                     // and will fail this job.
                     const rule = value.substring(1);

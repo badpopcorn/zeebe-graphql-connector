@@ -14,7 +14,9 @@ In Camunda Cloud, one can:
   a variable to be passed along with the GraphQL request. Note that the
   prefix is removed for the actual request. For example, the header
   `graphql_var_id` will be named `id` in the GraphQL request.
-5. If the value of any graphql var header begins with a `=` character,
+5. If the value of a graphql var header is equal to `=$`, then the value
+  of the graphql variable is the JSON stringified feelContext.
+  Else if the value of the graphql var header begins with a `=` character,
   the this job worker will evaluate the string as a FEEL expression.
   Otherwise, it is assumed to be a string literal.
   The context of the FEEL express are the Process Instance's variables,

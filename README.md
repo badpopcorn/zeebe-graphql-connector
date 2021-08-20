@@ -21,6 +21,9 @@ In Camunda Cloud, one can:
   Otherwise, it is assumed to be a string literal.
   The context of the FEEL express are the Process Instance's variables,
   merged with some Zeebe Job variables (prefixed with `zeebe`).
+6. If the service task header `graphql_data_key` is set, then a
+  Zeebe Process Instance Variable, named after the header's value,
+  will be populated with the data returned by the GraphQL query/mutation.
 
 The feelContext:
 
@@ -63,3 +66,14 @@ Just start the server:
 ```
 node index.js
 ```
+
+# Service Task Results
+
+After the GraphQL is executed by this Job Worker, the data returned
+by the GraphQL query/mutation will be also returned as instance
+variables back to the Zeebe Process Instance. These variables
+will be named according to the flattening process of the GraphQL
+data returned.
+
+If the `graphql_data_key` is set, then the full GraphQL result data
+will be populated into a corresponding Zeebe Process Instance Variable.

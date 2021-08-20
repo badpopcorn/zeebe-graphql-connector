@@ -3,6 +3,7 @@
 const { ZBClient } = require('zeebe-node');
 const { GraphQLClient, gql } = require('graphql-request');
 const { feel } = require('js-feel')();
+const { flattenJSONIntoRAW}  = require('./flattener');
 
 // Configuration settings from the environment.
 const GRAPHQL_ENDPOINT_URL = process.env.GRAPHQL_ENDPOINT_URL;
@@ -79,10 +80,13 @@ const handler = async (job, complete, worker) => {
         const data = await gqlClient.request(query, variables);
         // console.log(data);
 
-        // A success is returning the data back to Zeebe, as nested
-        // under a given key, or merged into the root Zeebe Process Instance
-        // variables.
-        complete.success((dataKey && dataKey.length > 0) ? ({ [dataKey]: data }) : data);
+        // A GraphQL Query Success will return the data flattened into
+        // Zeebe Instance variables. If the dataKey is provided, then
+        // the full data is returned under that key.
+        const result = (dataKey && dataKey.length > 0) ?
+          { [dataKey]: data, ...(flattenJSONIntoRAW(data)) } :
+          flattenJSONIntoRAW(data);
+        complete.success(result);
     } catch(err) {
         console.error(err);
         complete.failure(err);

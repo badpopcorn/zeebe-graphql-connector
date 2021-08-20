@@ -5,44 +5,19 @@
 // https://codepen.io/awaht/pen/poEdmMa
 //
 
-function flattenJSONIntoKVP(json)
+function flattenJSONIntoRAW(json)
 {
     const $flatten = (obj, prefixKey) =>
     {
         let results =[]
         const _flatter = k=>{
             const $isObject = typeof (obj[k]) === 'object' && obj[k] !== null;
-            if ($isObject ) 
-            { 
-                results = $flatten(obj[k], prefixKey? `${prefixKey}.${k}` : k) 
-                return results.filter(r=>results.map($r=>$r.key).includes(r.key))//.forEach(r=>results.push(r))
+            if ($isObject )
+            {
+                results = $flatten(obj[k], prefixKey? `${prefixKey}_${k}` : k)
+                return results;
             }
-            results= {key: prefixKey? `${prefixKey}.${k}` : k, value: obj[k] }
-            return results
-        };
-        return Object.keys(obj).map(_flatter );
-    }
-    const __results = []
-    const flat      = $flatten(json)
-    const _traverse = obj=> Array.isArray(obj) ? obj.forEach(item => _traverse(item)) : __results.push(obj)
-    
-    flat.forEach(entry=> _traverse(entry))
-    return __results
-}
-
-function flattenJSONIntoRAW(json)
-{    
-    const $flatten = (obj, prefixKey) =>
-    {
-        let results =[]
-        const _flatter = k=>{
-            const $isObject = typeof (obj[k]) === 'object' && obj[k] !== null;
-            if ($isObject ) 
-            { 
-                results = $flatten(obj[k], prefixKey? `${prefixKey}.${k}` : k) 
-                return results; 
-            }
-            results= { [prefixKey? `${prefixKey}.${k}` : k] : obj[k] }
+            results= { [prefixKey? `${prefixKey}_${k}` : k] : obj[k] }
             return results
         };
         return Object.keys(obj).map(_flatter);
@@ -58,6 +33,5 @@ function flattenJSONIntoRAW(json)
 }
 
 module.exports = {
-    flattenJSONIntoKVP,
     flattenJSONIntoRAW
 }

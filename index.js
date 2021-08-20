@@ -30,6 +30,7 @@ const handler = async (job, complete, worker) => {
         // We begin by getting the query data from the job
         console.log(`Handling Job: key=${job.key}, type=${job.type}, workflowInstanceKey=${job.workflowInstanceKey}, processInstanceKey=${job.processInstanceKey}, bpmnProcessId=${job.bpmnProcessId}, workflowDefinitionVersion=${job.workflowDefinitionVersion}, processDefinitionVersion=${job.processDefinitionVersion}, workflowKey=${job.workflowKey}, processKey=${job.processKey}, elementId=${job.elementId}, elementInstanceKey=${job.elementInstanceKey}`);
         const dataKey = job.customHeaders.graphql_data_key;
+        const dataPrefix = job.customHeaders.graphql_data_prefix;
         const queryStr = job.customHeaders.graphql_query;
         const query = gql([queryStr], []);
         // This is the data from the job we're making available for the FEEL expressions.
@@ -83,9 +84,12 @@ const handler = async (job, complete, worker) => {
         // A GraphQL Query Success will return the data flattened into
         // Zeebe Instance variables. If the dataKey is provided, then
         // the full data is returned under that key.
+        const dataFlattened = (dataPrefix && dataPrefix.length > 0) ?
+            flattenJSONIntoRAW({ [dataPrefix]: data }) :
+            flattenJSONIntoRAW(data);
         const result = (dataKey && dataKey.length > 0) ?
-          { [dataKey]: data, ...(flattenJSONIntoRAW(data)) } :
-          flattenJSONIntoRAW(data);
+            { [dataKey]: data, ...dataFlattened } :
+            dataFlattened;
         complete.success(result);
     } catch(err) {
         console.error(err);

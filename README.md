@@ -24,6 +24,8 @@ In Camunda Cloud, one can:
 6. If the service task header `graphql_data_key` is set, then a
   Zeebe Process Instance Variable, named after the header's value,
   will be populated with the data returned by the GraphQL query/mutation.
+7. If the service header `graphql_data_prefix` is set, then the
+  resulting instance variables will be prefixed with its value.
 
 The feelContext:
 
